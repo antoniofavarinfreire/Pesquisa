@@ -8,7 +8,10 @@ float gamna[2] = {7.0, 14.0};
 float alpha[2] = {4.1, 7.0};
 float R0_ [2] = {2.5, 6.0}; 
 
-
+void run_SEIR_BAYES_model(float N, float E0, float I0, float R0,
+                          float R0_params[2], float gamna_inv_params[2],
+                          float alpha_inv_params[2], float fator_subr,
+                          float t_max, float runs);
 
 
 
@@ -71,5 +74,43 @@ int main(){
         printf("%f\n", R0_params[i]);
     }
     i=0;
+    /*int teste[2];
+    teste[i] = 0;
+    teste[i+1] = 1;
+    i=0;
+    for(i=0;i<2;i++){
+        printf("Teste %d", teste[i]);
+    }*/
     return 0;
+}
+
+void run_SEIR_BAYES_model(float N, float E0, float I0, float R0,
+                          float R0_params[2], float gamna_inv_params[2],
+                          float alpha_inv_params[2], float fator_subr,
+                         float t_max, float runs){
+
+    I0 = fator_subr * I0;
+    E0 = fator_subr * E0;
+    float S0 = N - (I0 + R0 + E0);
+    float size[2];
+    size[1] = t_max;
+    size[2] = runs;
+    int i = 0;
+    float S[2], E[2], I[2], R[2];
+    S[i] = 0;
+    S[i+1] = S0;
+    i=0;
+
+    E[i] = 0;
+    E[i+1] = E0;
+    i=0;
+
+    I[i] = 0;
+    I[i+1] = I0;
+    i=0;
+
+    R[i] = 0;
+    R[i+1] = R0;
+
+    
 }
