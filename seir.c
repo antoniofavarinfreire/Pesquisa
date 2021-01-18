@@ -112,5 +112,8 @@ void run_SEIR_BAYES_model(float N, float E0, float I0, float R0,
     R[i] = 0;
     R[i+1] = R0;
 
+    int t;
+
     
+
 }
