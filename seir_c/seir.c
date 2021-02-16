@@ -1,7 +1,11 @@
 #include<stdio.h>
 #include<string.h>
+#include<stdlib.h>
 #include<math.h>
 
+#include "log_normal.h"
+//gcc -o monstrinho prog1.o prog2.o prog3.o ...
+//gcc -o nome nome.c -lm
 //Default
 double fator_subr = 40;
 float gamna[2] = {7.0, 14.0};
@@ -9,9 +13,9 @@ float alpha[2] = {4.1, 7.0};
 float R0_ [2] = {2.5, 6.0}; 
 
 void run_SEIR_BAYES_model(float N, float E0, float I0, float R0,
-                          float R0_params[2], float gamna_inv_params[2],
-                          float alpha_inv_params[2], float fator_subr,
-                          float t_max, float runs);
+                          float *R0_params, float *gamna_inv_params,
+                          float *alpha_inv_params, float fator_subr,
+                         float t_max, float runs);
 
 
 
@@ -74,6 +78,10 @@ int main(){
         printf("%f\n", R0_params[i]);
     }
     i=0;
+
+    run_SEIR_BAYES_model(N, E0, I0, R0,  R0_params, gamma_inv_params,
+                          alpha_inv_params, fator_subr,
+                          t_max,  runs);
     /*int teste[2];
     teste[i] = 0;
     teste[i+1] = 1;
@@ -85,11 +93,13 @@ int main(){
 }
 
 void run_SEIR_BAYES_model(float N, float E0, float I0, float R0,
-                          float R0_params[2], float gamna_inv_params[2],
-                          float alpha_inv_params[2], float fator_subr,
+                          float *R0_params, float *gamna_inv_params,
+                          float *alpha_inv_params, float fator_subr,
                          float t_max, float runs){
 
+    printf("Entrou na função\n");
     I0 = fator_subr * I0;
+    printf("I0 = %f\n", I0);
     E0 = fator_subr * E0;
     float S0 = N - (I0 + R0 + E0);
     float size[2];
@@ -111,9 +121,41 @@ void run_SEIR_BAYES_model(float N, float E0, float I0, float R0,
 
     R[i] = 0;
     R[i+1] = R0;
+    i=0;
+  
+    double x = R0_params[i];
+    double mu = R0_params[i+1];
 
-    int t;
+    R0 = log_normal_cdf(x, mu, runs);
+    x = 0;
+    mu = 0;
+    i=0;
 
+    double gamma;
+    x = gamna_inv_params [i];
+    mu = gamna_inv_params [i+1];
+    gamma = 1/(log_normal_cdf(x, mu,runs));
+    x = 0;
+    mu = 0;    
+    i=0;
+
+    double alpha;
+    x = alpha_inv_params [i];
+    mu = alpha_inv_params [i+1];
+    alpha = 1 / (log_normal_cdf(x,mu,runs));
+    x = 0;
+    mu = 0;
+    i=0;
+
+    double beta;
+    beta = R0 * gamma;  
+    //printf("R0 = %f\n", R0);
+    //for(i=t_max ; i>0 ; i--){
+
+    //}  
+    printf("R0 = %f\n", R0);
+    printf("gamma = %f\n", gamma);
+    printf("aplha = %f\n", alpha);
+    printf("beta = %f\n", beta);
     
-
 }

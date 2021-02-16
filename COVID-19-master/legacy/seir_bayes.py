@@ -53,7 +53,7 @@ def run_SEIR_BAYES_model(
     gamma = 1/npr.lognormal(*map(np.log, gamma_inv_params), runs)
     alpha = 1/npr.lognormal(*map(np.log, alpha_inv_params), runs)
     beta = R0_*gamma
-   
+    
     for t in t_space[1:]:
 
         SE = npr.binomial(S[t-1, ].astype('int'), expon(scale=1/(beta*I[t-1, ]/N)).cdf(1))
