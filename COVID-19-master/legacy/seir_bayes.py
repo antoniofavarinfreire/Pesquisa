@@ -38,7 +38,7 @@ def run_SEIR_BAYES_model(
     I0 = fator_subr*I0
     E0 = fator_subr*E0
     S0 = N - (I0 + R0 + E0)
-    t_space = np.arange(0, t_max)
+    t_space = np.arange(0, t_max) # Criando uma seguencai de 0 ao t_max
 
     size = (t_max, runs)
 

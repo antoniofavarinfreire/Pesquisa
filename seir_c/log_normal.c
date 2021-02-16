@@ -1243,3 +1243,112 @@ void timestamp ( )
   return;
 # undef TIME_SIZE
 }
+
+// Modelo SEIR
+void run_SEIR_BAYES_model(float N, float E0, float I0, float R0,
+                          float *R0_params, float *gamna_inv_params,
+                          float *alpha_inv_params, float fator_subr,
+                         float t_max, float runs){
+
+    printf("Entrou na função\n");
+    I0 = fator_subr * I0;
+    printf("I0 = %f\n", I0);
+    E0 = fator_subr * E0;
+    float S0 = N - (I0 + R0 + E0);
+    float t_space[2] = {0, t_max}; // criando uma seguencia de 0 à t_max
+    
+    float size[2];
+    size[1] = t_max;
+    size[2] = runs;
+    int i = 0;
+    float S[2], E[2], I[2], R[2];
+    S[i] = 0;
+    S[i+1] = S0;
+    i=0;
+
+    E[i] = 0;
+    E[i+1] = E0;
+    i=0;
+
+    I[i] = 0;
+    I[i+1] = I0;
+    i=0;
+
+    R[i] = 0;
+    R[i+1] = R0;
+    i=0;
+  
+    double x = R0_params[i];
+    double mu = R0_params[i+1];
+
+    R0 = log_normal_cdf(x, mu, runs);
+    x = 0;
+    mu = 0;
+    i=0;
+
+    double gamma;
+    x = gamna_inv_params [i];
+    mu = gamna_inv_params [i+1];
+    gamma = 1/(log_normal_cdf(x, mu,runs));
+    x = 0;
+    mu = 0;    
+    i=0;
+
+    double alpha;
+    x = alpha_inv_params [i];
+    mu = alpha_inv_params [i+1];
+    alpha = 1 / (log_normal_cdf(x,mu,runs));
+    x = 0;
+    mu = 0;
+    i=0;
+
+    double beta;
+    beta = R0 * gamma;  
+    //printf("R0 = %f\n", R0);
+    double scale;
+    for (i=t_max ; i>0 ; i --){
+        //double SE = binomial((i-1), ());
+        double EI = binomial(, )
+    }
+
+    /*
+    printf("R0 = %f\n", R0);
+    printf("gamma = %f\n", gamma);
+    printf("aplha = %f\n", alpha);
+    printf("beta = %f\n", beta);
+    for(i=0 ; i<2 ; i++){
+        printf("S[%d] = %f\n", i, S[i]);
+        printf("E[%d] = %f\n", i, E[i]);
+        printf("I[%d] = %f\n", i, I[i]);
+        printf("R[%d] = %f\n",i, R[i]);
+    }*/
+    
+}
+
+//Binomial
+void binomial(double x, double y){
+    int i, j, n, k, min, c[20][20]={0};
+    //printf("This program is brought to you by www.c-program-example.com\n" );     
+    //printf("\n Enter the value of n: ");     
+    //scanf("%d", &n);     
+    n = x;
+    //printf("\n Enter the value of k: ");     
+    scanf("%d", &k);
+    k = y;
+    if(n >= k) {         
+        for(i=0; i<=n; i++) {             
+            min = i<k? i:k;
+            for(j = 0; j <= min; j++) {
+                 if(j==0 || j == i) {
+                     c[i][j] = 1;
+                 } else {
+                     c[i][j] = c[i-1][j-1] + c[i-1][j];
+                 }
+             }
+         }
+         printf("%d\t",c[n][k]);
+         printf("\n");
+     } else {
+         printf("\n Invalid input \n Enter value n>=k \n");
+     }
+}
