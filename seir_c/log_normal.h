@@ -25,3 +25,12 @@ double r8vec_min ( int n, double x[] );
 double r8vec_variance ( int n, double x[] );
 
 void timestamp ( );
+
+//Função de aplicação modelo SEIR
+void run_SEIR_BAYES_model(float N, float E0, float I0, float R0,
+                          float *R0_params, float *gamna_inv_params,
+                          float *alpha_inv_params, float fator_subr,
+                         float t_max, float runs);
+
+//Função para calculo binomial
+void binomial(double x, double y);

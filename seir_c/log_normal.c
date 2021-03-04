@@ -1252,32 +1252,83 @@ void run_SEIR_BAYES_model(float N, float E0, float I0, float R0,
 
     printf("Entrou na função\n");
     I0 = fator_subr * I0;
-    printf("I0 = %f\n", I0);
+    printf("I0 = %.1f\n", I0);
     E0 = fator_subr * E0;
+    printf("E0 = %.1f\n", E0);
     float S0 = N - (I0 + R0 + E0);
-    float t_space[2] = {0, t_max}; // criando uma seguencia de 0 à t_max
+    printf("S0 = %.1f\n", S0);
+    int t_space[1000] ; // criando uma seguencia de 0 à t_max
     
-    float size[2];
-    size[1] = t_max;
-    size[2] = runs;
-    int i = 0;
-    float S[2], E[2], I[2], R[2];
-    S[i] = 0;
-    S[i+1] = S0;
-    i=0;
+    // Criando t_space
+    int i;
+    for(i=0;i<t_max; i ++){
+      t_space[i] = i;
+    }
+    
+    float S[180][1000];
+    float E[180][1000];
+    float I[180][1000];
+    float R[180][1000];
+    int j, k;
+    
+    
+    for(j = 0 ; j < 1 ; j ++){ //Linhas
+      for(k = 0 ; k < runs ; k ++){ //Colunas
+          S[j][k] = S0; 
+      }
+    }
 
-    E[i] = 0;
-    E[i+1] = E0;
-    i=0;
+    for(j = 0 ; j < 1 ; j ++){ //Linhas
+      for(k = 0 ; k < runs ; k ++){ //Colunas
+          E[j][k] = E0; 
+      }
+    }
 
-    I[i] = 0;
-    I[i+1] = I0;
-    i=0;
 
-    R[i] = 0;
-    R[i+1] = R0;
-    i=0;
-  
+    for(j = 0 ; j < 1 ; j ++){ //Linhas
+      for(k = 0 ; k < runs ; k ++){ //Colunas
+          I[j][k] = I0; 
+      }
+    }
+
+    for(j = 0 ; j < 1 ; j ++){ //Linhas
+      for(k = 0 ; k < runs ; k ++){ //Colunas
+          R[j][k] = R0; 
+      }
+    }
+    /*
+    for(j = 0 ; j < 6 ; j ++){ //Linhas
+    printf(" (");
+      for(k = 0 ; k < 5 ; k ++){ //Colunas
+          printf("%f    ", S[j][k]); 
+      }
+      printf(")\n");
+    }
+    printf("\n");
+    for(j = 0 ; j < 6 ; j ++){ //Linhas
+    printf(" (");
+      for(k = 0 ; k < 5 ; k ++){ //Colunas
+          printf("%f    ", E[j][k]); 
+      }
+      printf(")\n");
+    }
+    printf("\n");
+    for(j = 0 ; j < 6 ; j ++){ //Linhas
+    printf(" (");
+      for(k = 0 ; k < 5 ; k ++){ //Colunas
+          printf("%f    ", I[j][k]); 
+      }
+      printf(")\n");
+    }
+    printf("\n");
+    for(j = 0 ; j < 6 ; j ++){ //Linhas
+    printf(" (");
+      for(k = 0 ; k < 5 ; k ++){ //Colunas
+          printf("%f    ", R[j][k]); 
+      }
+      printf(")\n");
+    }*/
+
     double x = R0_params[i];
     double mu = R0_params[i+1];
 
@@ -1306,9 +1357,11 @@ void run_SEIR_BAYES_model(float N, float E0, float I0, float R0,
     beta = R0 * gamma;  
     //printf("R0 = %f\n", R0);
     double scale;
+
+
     for (i=t_max ; i>0 ; i --){
         //double SE = binomial((i-1), ());
-        double EI = binomial(, )
+        //double EI = binomial(, )
     }
 
     /*

@@ -34,8 +34,9 @@ def run_SEIR_BAYES_model(
         t_max: 'numer of days to run',
         runs: 'number of runs'
     ):
-
+    print("Entrou na função")
     I0 = fator_subr*I0
+    print(I0)
     E0 = fator_subr*E0
     S0 = N - (I0 + R0 + E0)
     t_space = np.arange(0, t_max) # Criando uma seguencai de 0 ao t_max
@@ -55,7 +56,7 @@ def run_SEIR_BAYES_model(
     beta = R0_*gamma
     
     for t in t_space[1:]:
-
+        print (S[t-1,] ) # print S[t]
         SE = npr.binomial(S[t-1, ].astype('int'), expon(scale=1/(beta*I[t-1, ]/N)).cdf(1))
         EI = npr.binomial(E[t-1, ].astype('int'), expon(scale=1/alpha).cdf(1))
         IR = npr.binomial(I[t-1, ].astype('int'), expon(scale=1/gamma).cdf(1))
@@ -80,6 +81,7 @@ def seir_bayes_plot(N, E0, I0, R0,
                     t_max, runs, S, E, I, R, t_space):
     S0 = N - (I0 + R0 + E0)
     # plot
+    
     algorithm_text = (
         f"for {runs} runs, do:\n"
         f"\t$S_0={S0}$\n\t$E_0={E0}$\n\t$I_0={I0}$\n\t$R_0={R0}$\n"
@@ -213,6 +215,7 @@ if __name__ == '__main__':
     fator_subr = DEFAULT_PARAMS['fator_subr']
     t_max = 30*6
     runs = 1_000
+    print("chamada SEIR")
     S, E, I, R, t_space = run_SEIR_BAYES_model(
                                       N, E0, I0, R0,
                                       R0__params,
@@ -221,9 +224,11 @@ if __name__ == '__main__':
                                       fator_subr,
                                       t_max, runs)
 
+    
     fig = seir_bayes_plot(N, E0, I0, R0,
                           R0__params,
                           gamma_inv_params,
                           alpha_inv_params,
                           t_max, runs, S, E, I, R, t_space)
     plt.show()
+    
