@@ -30,7 +30,7 @@ void timestamp ( );
 void run_SEIR_BAYES_model(float N, float E0, float I0, float R0,
                           float *R0_params, float *gamna_inv_params,
                           float *alpha_inv_params, float fator_subr,
-                         float t_max, float runs);
+                         float t_max, int runs);
 
 //Função para calculo binomial
 void binomial(double x, double y);

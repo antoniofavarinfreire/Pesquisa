@@ -29,20 +29,23 @@ int main(){
     for (i=0 ; i<2 ; i++){
         printf("R0_params[%d] = %f\n",i, R0_params[i]);
     }
-    double mu, sigma, ret;
+    double mu, sigmma, ret;
     int *seed;
-    for ( i = 0; i < 2; i++){
-        
-    }
     
-    mu = R0_params[i];
-    printf("MU = %f\n");
-    sigma = R0_params[i+1];
-    printf("Sigama = %f\n");
-    seed = runs;
-    printf("%d\n", seed);
-    ret = log_normal_sample(mu, sigma, seed);
-    printf("Sample = %f\n", ret);
+    mu = R0_params[0];
+    printf("MU = %f\n", mu);
+    
+    sigmma = R0_params[1];
+    printf("Sigma = %f\n", sigmma);
+    
+    //Tentativa de lognormal/////////
+    double V = exp(mu + sigmma*runs);
+    /////////////////////////////////
+    
+
+    //ret = log_normal_pdf(mu, sigmma, runs);
+    //ret = log_normal_sample(mu, sigmma, &seed);
+    //printf("Sample = %f\n", ret);
 
 
     return 0;

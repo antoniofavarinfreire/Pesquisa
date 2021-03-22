@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #include<math.h>
 
-#include "log_normal.h"
+#include "seir.h"
 //gcc -o monstrinho prog1.o prog2.o prog3.o ...
 //gcc -o nome nome.c -lm
 //Default
@@ -17,7 +17,8 @@ int main(){
     float N = 13000000;
     float R0_params[2], gamma_inv_params[2], alpha_inv_params[2];
     float E0, I0, R0;
-    float t_max, runs;
+    float t_max;
+    int runs;
     float mean, std;
     int i=0;
     E0 = 300;
