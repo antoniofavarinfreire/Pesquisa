@@ -5,20 +5,29 @@ from scipy.stats import norm, expon
 import matplotlib.pyplot as plt
 import dask.bag as db
 
+#biblioteca para time
+import time
+
 DEFAULT_PARAMS = {
-    'fator_subr': 40.0,
+    'fator_subr': 400.0,
 
     # these are 95% confidence intervals
     # for a lognormal
-    'gamma': (7.0, 14.0),
-    'alpha': (4.1, 7.0),
-    'R0_': (2.5, 6.0),
+    'gamma': (70000.0, 140000.0),
+    'alpha': (40000.1, 70000.0),
+    'R0_': (20000.5, 600000.0),
 }
 
 
 def make_lognormal_params_95_ci(lb, ub):
+    
+    inicio = time.time()
+
     mean = (ub*lb)**(1/2)
     std = (ub/lb)**(1/4)
+
+    fim = time.time()
+    print("Make_lognormal = ", fim - inicio)
     return mean, std
 
 
@@ -34,12 +43,13 @@ def run_SEIR_BAYES_model(
         t_max: 'numer of days to run',
         runs: 'number of runs'
     ):
-    print("Entrou na função")
+
+    inicio = time.time()
+
     I0 = fator_subr*I0
-    print(I0)
     E0 = fator_subr*E0
     S0 = N - (I0 + R0 + E0)
-    t_space = np.arange(0, t_max) # Criando uma seguencai de 0 ao t_max
+    t_space = np.arange(0, t_max)
 
     size = (t_max, runs)
 
@@ -54,9 +64,9 @@ def run_SEIR_BAYES_model(
     gamma = 1/npr.lognormal(*map(np.log, gamma_inv_params), runs)
     alpha = 1/npr.lognormal(*map(np.log, alpha_inv_params), runs)
     beta = R0_*gamma
-    
+   
     for t in t_space[1:]:
-        print (S[t-1,] ) # print S[t]
+
         SE = npr.binomial(S[t-1, ].astype('int'), expon(scale=1/(beta*I[t-1, ]/N)).cdf(1))
         EI = npr.binomial(E[t-1, ].astype('int'), expon(scale=1/alpha).cdf(1))
         IR = npr.binomial(I[t-1, ].astype('int'), expon(scale=1/gamma).cdf(1))
@@ -71,6 +81,8 @@ def run_SEIR_BAYES_model(
         I[t, ] = I[t-1, ] + dI
         R[t, ] = R[t-1, ] + dR
     
+    fim = time.time()
+    print("Seir model", fim - inicio)
     return S, E, I, R, t_space
 
 
@@ -79,9 +91,11 @@ def seir_bayes_plot(N, E0, I0, R0,
                     gamma_inv_params,
                     alpha_inv_params,
                     t_max, runs, S, E, I, R, t_space):
+    
+    inicio = time.time()
+
     S0 = N - (I0 + R0 + E0)
     # plot
-    
     algorithm_text = (
         f"for {runs} runs, do:\n"
         f"\t$S_0={S0}$\n\t$E_0={E0}$\n\t$I_0={I0}$\n\t$R_0={R0}$\n"
@@ -117,6 +131,8 @@ def seir_bayes_plot(N, E0, I0, R0,
             transform=ax.transAxes, fontsize=18,
             verticalalignment='top', bbox=props)
     plt.yscale('log')
+    fim = time.time()
+    print("Seir bayes plot = ", fim - inicio)
     return fig
 
 
@@ -127,7 +143,7 @@ def seir_bayes_interactive_plot(N, E0, I0, R0,
     from .visualization import prep_tidy_data_to_plot, make_combined_chart
     source = prep_tidy_data_to_plot(E, I, t_space)
     chart = make_combined_chart(source, 
-                                scale=scale, 5
+                                scale=scale, 
                                 show_uncertainty=show_uncertainty)
     return chart
 
@@ -149,10 +165,10 @@ def seir_bayes_df_pop(
                                                   .shift(-int(alpha_inv_params[1]))
                                                   .fillna(method='ffill')
                                                   .fillna(0))))
-    print("teste")
+
     population = pd.read_csv('data/csv/population/by_city/by_city.csv', index_col=['uf', 'city'])
     covid19 = pd.read_csv('data/csv/covid_19/by_city/by_city.csv', parse_dates=['date'])
-    print("teste")
+
 
     date = covid19['date'].max() if date == 'latest' else date
 
@@ -207,6 +223,9 @@ def seir_bayes_df_pop(
 
 
 if __name__ == '__main__':
+    
+    inicio = time.time()
+
     N = 13_000_000
     E0, I0, R0 = 300, 250, 1
     R0__params = make_lognormal_params_95_ci(*DEFAULT_PARAMS['R0_'])
@@ -215,7 +234,6 @@ if __name__ == '__main__':
     fator_subr = DEFAULT_PARAMS['fator_subr']
     t_max = 30*6
     runs = 1_000
-    print("chamada SEIR")
     S, E, I, R, t_space = run_SEIR_BAYES_model(
                                       N, E0, I0, R0,
                                       R0__params,
@@ -224,11 +242,11 @@ if __name__ == '__main__':
                                       fator_subr,
                                       t_max, runs)
 
-    
     fig = seir_bayes_plot(N, E0, I0, R0,
                           R0__params,
                           gamma_inv_params,
                           alpha_inv_params,
                           t_max, runs, S, E, I, R, t_space)
     plt.show()
-    
+    final = time.time()
+    print("Main time =", final - inicio)
