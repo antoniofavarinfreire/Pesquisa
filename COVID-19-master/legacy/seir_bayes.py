@@ -4,7 +4,10 @@ import numpy.random as npr
 from scipy.stats import norm, expon
 import matplotlib.pyplot as plt
 import dask.bag as db
-
+#import datetime
+import datetime
+#import dateparser
+#from datetime import datetime
 #biblioteca para time
 import time
 
@@ -17,6 +20,7 @@ DEFAULT_PARAMS = {
     'alpha': (40000.1, 70000.0),
     'R0_': (20000.5, 600000.0),
 }
+
 
 
 def make_lognormal_params_95_ci(lb, ub):
@@ -148,15 +152,15 @@ def seir_bayes_interactive_plot(N, E0, I0, R0,
     return chart
 
 def seir_bayes_df_pop(
-        R0__params: 'repr. rate upper and lower limits' = DEFAULT_PARAMS['R0_'],
-        gamma_inv_params: 'removal rate upper and lower limits' = DEFAULT_PARAMS['gamma'],
-        alpha_inv_params: 'incubation rate upper and lower limits' = DEFAULT_PARAMS['alpha'],
-        fator_subr: 'subreporting factor, multiples I0 and E0' = DEFAULT_PARAMS['fator_subr'],
-        t_max: 'numer of days to run' = 30,
-        runs: 'number of runs' = 1000,
-        date: 'load SEIR(0) for this date' = 'latest' 
+        R0__params: 'repr. rate upper and lower limits' ,
+        gamma_inv_params: 'removal rate upper and lower limits' ,
+        alpha_inv_params: 'incubation rate upper and lower limits' ,
+        fator_subr: 'subreporting factor, multiples I0 and E0' ,
+        t_max: 'numer of days to run' ,
+        runs: 'number of runs' ,
+        date: 'load SEIR(0) for this date' 
     ):
-
+    print("1\n")
     def estimate_removed_and_exposed(df):
         return (df
                 .sort_values('date')
@@ -165,17 +169,33 @@ def seir_bayes_df_pop(
                                                   .shift(-int(alpha_inv_params[1]))
                                                   .fillna(method='ffill')
                                                   .fillna(0))))
+    
+    print("2\n")
+    datafile = "Documents/Pesquisa/COVID-19-master/data/ibge_population.csv"
+    population = pd.read_csv(datafile,  index_col=['uf', 'city'])
+    population.info()
+    print(population)
+    print("3\n")
 
-    population = pd.read_csv('data/csv/population/by_city/by_city.csv', index_col=['uf', 'city'])
-    covid19 = pd.read_csv('data/csv/covid_19/by_city/by_city.csv', parse_dates=['date'])
+    #print(population.head(5))
+    #dateparse = lambda x: datatime.strptime(x, "%Y-%m-%d")
+    #population = pd.read_csv("Documents/Pesquisa/COVID-19-master/legacy/ibge_population.csv", index_col='uf')
+    
+    datafile = "Documents/Pesquisa/COVID-19-master/data/latest_cases_ms.csv"
+    covid19 = pd.read_csv(datafile, sep = ";", parse_dates=['date'])
+    covid19.info()
+    print(covid19)
+    print("4\n")
+    #printf(covid19.head(5))
 
-
+    print("5\n")
     date = covid19['date'].max() if date == 'latest' else date
 
     # if this fails, something is wrong with the data
     assert population.index.is_unique
+    print("6\n")
     assert covid19.index.is_unique
-
+    print("7\n")
     SEIR_0 = (
         covid19
         .groupby(['uf', 'city'], group_keys=False)
@@ -188,7 +208,7 @@ def seir_bayes_df_pop(
         .query("cases >= 5")
         .to_dict(orient='records')
     )
-
+    print("8\n")
     # In:  SEIR_0[:2]
     # Out: [{'uf': 'AC',
     #        'city': 'Rio Branco',
@@ -202,7 +222,7 @@ def seir_bayes_df_pop(
     #        'exposed_est': 3.0,
     #        'cases': 4,
     #        'removed_est': 0.0}]
-
+    print("7\n")
     def run_model(params):
         N = params['estimated_population']
         E0 = params['exposed_est']
@@ -234,19 +254,36 @@ if __name__ == '__main__':
     fator_subr = DEFAULT_PARAMS['fator_subr']
     t_max = 30*6
     runs = 1_000
-    S, E, I, R, t_space = run_SEIR_BAYES_model(
-                                      N, E0, I0, R0,
-                                      R0__params,
-                                      gamma_inv_params,
-                                      alpha_inv_params,
-                                      fator_subr,
-                                      t_max, runs)
+    #S, E, I, R, t_space = run_SEIR_BAYES_model(
+    #                                  N, E0, I0, R0,
+    #                                  R0__params,
+    #                                  gamma_inv_params,
+    #                                  alpha_inv_params,
+    #                                  fator_subr,
+    #                                  t_max, runs)
 
-    fig = seir_bayes_plot(N, E0, I0, R0,
-                          R0__params,
-                          gamma_inv_params,
-                          alpha_inv_params,
-                          t_max, runs, S, E, I, R, t_space)
-    plt.show()
+    #fig = seir_bayes_plot(N, E0, I0, R0,
+    #                      R0__params,
+    #                      gamma_inv_params,
+    #                      alpha_inv_params,
+    #                      t_max, runs, S, E, I, R, t_space)
+    #plt.show()
+    #retornar D/M/A atual
+    #date = datetime.date.today()
+    #formatador
+    #dateparse = lambda x: datatime.strptime(x, "%Y-%m-%d")
+    #str = 2020/4/10
+    date = datetime.datetime(2020, 4, 17)
+    #date = dateparser.parse('17/04/2020')
+    #print("Data",date)
+   
+    seir_bayes_df_pop( R0__params,
+                        gamma_inv_params,
+                        alpha_inv_params,
+                        fator_subr,
+                        t_max,
+                        runs,
+                        date
+                        )
     final = time.time()
     print("Main time =", final - inicio)
